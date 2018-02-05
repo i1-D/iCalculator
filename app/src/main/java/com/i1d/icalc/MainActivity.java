@@ -97,8 +97,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btn_del_Click(View view) {
-        if(txt_input.getText() != "")
-            txt_input.setText(txt_input.getText().subSequence(0,txt_input.length() - 1));
+        if(!StringUtils.isAllEmpty(txt_input.getText())) {
+            int len = txt_input.length();
+            char last = txt_input.getText().charAt(len-1);
+            if (last == ' ')
+                txt_input.setText(txt_input.getText().subSequence(0, len - 3));
+            else
+                txt_input.setText(txt_input.getText().subSequence(0, len - 1));
+        }
     }
 
     public void btn_add_Click(View view) {
@@ -122,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btn_result_Click(View view) {
-        String str = convertExp(txt_input.getText().toString());
-        txt_output.setText(calculate(str.toCharArray()));
+        String[] inputArray = txt_input.getText().toString().split(" ");
+        txt_output.setText(calculateExp(convertExp(inputArray)));
     }
 
     public void operandFunction(char operand) {
@@ -131,41 +137,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void operatorFunction(char operator) {
-        char last = txt_input.getText().charAt(txt_input.length()-1);
-        if(last == '+' || last == '−' || last == '×' || last == '÷' || last == '%')
-            txt_input.setText(txt_input.getText().toString().replace(last,operator));
-        else
-            txt_input.setText(txt_input.getText() + " "+Character.toString(operator)+" ");
+        if(!StringUtils.isAllEmpty(txt_input.getText())) {
+            int len = txt_input.length();
+            char last = txt_input.getText().charAt(len - 1);
+            if (last == ' ')
+                txt_input.setText(txt_input.getText().toString().subSequence(0, len - 3) + " " + Character.toString(operator) + " ");
+            else
+                txt_input.setText(txt_input.getText() + " " + Character.toString(operator) + " ");
+        }
     }
 
-    public String convertExp(String[] source) {
+    public List<String> convertExp(String[] infix) {
         int i = 0;
         char temp;
-        List<String> result = new ArrayList<String>();
-        Stack<String> st = new Stack<String>();
+        List<String> postfix = new ArrayList<>();
+        Stack<String> st = new Stack<>();
 
-        while (i < source.length) {
-            if (StringUtils.isNumeric(source[i])) {
-                result.add(source[i]);
+        while (i < infix.length) {
+            if (StringUtils.isNumeric(infix[i])) {
+                postfix.add(infix[i]);
                 i++;
-            } else if (source[i] == "+" || source[i] == "−" || source[i] == "×" || source[i] == "÷" || source[i] == "%") {
-                while (!st.empty() && (getPriority(st.lastElement().charAt(0)) > getPriority(source[i].charAt(0)))) {
-                    result.add(st.pop());
+            } else {
+                while (!st.empty() && (getPriority(st.lastElement().charAt(0)) > getPriority(infix[i].charAt(0)))) {
+                    postfix.add(st.pop());
                 }
-                st.push(source[i]);
+                st.push(infix[i]);
                 i++;
             }
         }
 
         while (!st.empty()) {
-            result.add(st.pop());
+            postfix.add(st.pop());
         }
 
-        StringBuilder builder = new StringBuilder(result.size());
-        for(String ch: result)
-            builder.append(ch);
-
-        return builder.toString();
+        return postfix;
     }
 
     public int getPriority(char op) {
@@ -175,19 +180,19 @@ public class MainActivity extends AppCompatActivity {
             return 0;
     }
 
-    public String calculate(String[] exp) {
+    public String calculateExp(List<String> postfix) {
         int i = 0;
-        Stack<Float> st = new Stack<Float>();
+        Stack<Float> st = new Stack<>();
         float op1, op2, value = 0;
-        while(i < exp.length)
+        while(i < postfix.size())
         {
-            if(StringUtils.isNumeric(exp[i]))
-                st.push(Float.parseFloat(exp[i]));
+            if(StringUtils.isNumeric(postfix.get(i)))
+                st.push(Float.parseFloat(postfix.get(i)));
             else
             {
                 op2 = st.pop();
                 op1 = st.pop();
-                switch(exp[i])
+                switch(postfix.get(i))
                 {
                     case "+":
                         value = op1 + op2;
