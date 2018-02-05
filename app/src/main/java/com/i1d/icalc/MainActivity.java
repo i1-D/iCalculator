@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         Stack<String> st = new Stack<>();
 
         while (i < infix.length) {
-            if (StringUtils.isNumeric(infix[i])) {
+            if (infix[i].matches("\\d*\\.?\\d*")) {
                 postfix.add(infix[i]);
                 i++;
             } else {
@@ -182,12 +183,12 @@ public class MainActivity extends AppCompatActivity {
 
     public String calculateExp(List<String> postfix) {
         int i = 0;
-        Stack<Float> st = new Stack<>();
-        float op1, op2, value = 0;
+        Stack<Double> st = new Stack<>();
+        double op1, op2, value = 0;
         while(i < postfix.size())
         {
-            if(StringUtils.isNumeric(postfix.get(i)))
-                st.push(Float.parseFloat(postfix.get(i)));
+            if(postfix.get(i).matches("\\d*\\.?\\d*"))
+                st.push(Double.parseDouble(postfix.get(i)));
             else
             {
                 op2 = st.pop();
@@ -214,6 +215,13 @@ public class MainActivity extends AppCompatActivity {
             }
             i++;
         }
-        return String.valueOf(st.pop().floatValue());
+
+        if(value == (int)value)
+            return String.valueOf(st.pop().intValue());
+        else {
+            DecimalFormat decformat = new DecimalFormat("#.#####");
+            return String.valueOf(decformat.format(st.pop().doubleValue()));
+        }
+
     }
 }
