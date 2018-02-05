@@ -16,8 +16,6 @@ import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn0,btn00,btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn_clear;
-    private Button btn_result,btn_add,btn_sub,btn_div,btn_mul,btn_mod,btn_dot;
     private ImageButton btn_del;
     private TextView txt_input,txt_output;
 
@@ -26,21 +24,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initControl();
-    }
-
-    private void initControl() {
-
-        txt_input = (TextView) findViewById(R.id.txt_input);txt_output = (TextView) findViewById(R.id.txt_output);
-
-        btn0 = (Button) findViewById(R.id.btn_0);btn00 = (Button) findViewById(R.id.btn_00);btn1= (Button) findViewById(R.id.btn_1);
-        btn2 = (Button) findViewById(R.id.btn_2);btn3 = (Button) findViewById(R.id.btn_3);btn4 = (Button) findViewById(R.id.btn_4);
-        btn5 = (Button) findViewById(R.id.btn_5);btn6 = (Button) findViewById(R.id.btn_6);btn7 = (Button) findViewById(R.id.btn_7);
-        btn8 = (Button) findViewById(R.id.btn_8);btn9 = (Button) findViewById(R.id.btn_9);btn_del = (ImageButton) findViewById(R.id.btn_del);
-        btn_clear = (Button) findViewById(R.id.btn_clear);btn_result = (Button) findViewById(R.id.btn_result);btn_add = (Button) findViewById(R.id.btn_add);
-        btn_sub = (Button) findViewById(R.id.btn_sub);btn_mul = (Button) findViewById(R.id.btn_mul);btn_div = (Button) findViewById(R.id.btn_div);
-        btn_mod = (Button) findViewById(R.id.btn_mod);btn_dot = (Button) findViewById(R.id.btn_dot);
-
+        txt_input = (TextView) findViewById(R.id.txt_input);
+        txt_output = (TextView) findViewById(R.id.txt_output);
     }
 
     public void btn_O_Click(View view) {
@@ -167,9 +152,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        while (!st.empty()) {
+        while (!st.empty())
             postfix.add(st.pop());
-        }
 
         return postfix;
     }
@@ -185,16 +169,13 @@ public class MainActivity extends AppCompatActivity {
         int i = 0;
         Stack<Double> st = new Stack<>();
         double op1, op2, value = 0;
-        while(i < postfix.size())
-        {
+        while(i < postfix.size()) {
             if(postfix.get(i).matches("\\d*\\.?\\d*"))
                 st.push(Double.parseDouble(postfix.get(i)));
-            else
-            {
+            else {
                 op2 = st.pop();
                 op1 = st.pop();
-                switch(postfix.get(i))
-                {
+                switch(postfix.get(i)) {
                     case "+":
                         value = op1 + op2;
                         break;
@@ -222,6 +203,5 @@ public class MainActivity extends AppCompatActivity {
             DecimalFormat decformat = new DecimalFormat("#.#####");
             return String.valueOf(decformat.format(st.pop().doubleValue()));
         }
-
     }
 }
